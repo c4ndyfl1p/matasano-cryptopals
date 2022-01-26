@@ -1,5 +1,18 @@
 # Matasano-cryptopals
 
+My attempts at doing the Cryptopals challenges in Python.
+Having a lot of fun. You should to!
+
+If you happen to find this repository, bewarned, a lot of this code was written after, just 1 semester of python, at the start of my undergrad.
+Please be kind :) pretty please.
+Set 1, especially might feel unreadbale. I *like* to think I code better now. Emphasis on the like.
+
+I initially wanted to do writeups for all challenges, but that felt more of a task than pleasure. And I ended up procrastinating on even doing the challenges for over a year :)
+Now, I might do writeups for just specific challenges where I find something interesting, or if I come across dead end(in hopes that a future me might read them someday, and she'd be smarter than the present me and chuckle at the satisfaction of solving something she could not solve before).
+
+
+On y va!
+
 ## Set 1
 
 #### Challenge 1:
@@ -39,3 +52,9 @@ Takeaway:
 - Any representation of data has 2 aspects: radix/base and length.
 
   Saying "a binary string" is not enough. Instead "an 8-bit binary string" is more useful.
+
+#### Challenge 2:
+
+Implementation:
+
+Convert both the hexadecimal strings to 

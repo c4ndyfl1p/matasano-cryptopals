@@ -2,6 +2,9 @@
 # hex to base 64
 text = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
 
+print(bytes.fromhex(text))
+# print(str(text))
+# text = "1b70435152891b56f37a80a0de2c3b6f"
 #imp: bin() and int() methods
 #define hexadecimal value
 hex_value = "4"
@@ -17,11 +20,13 @@ bin_value = bin(int_value)
 bin_value = bin(int_value)[2:]
 # print(f"bin_value without preceeding 0b: {bin_value}")
 
-#pad for 8 bit string:
+#pad for 4 bit string:
 bin_value_padded = str(bin(int_value))[2:].zfill(4)
 # print(bin_value_padded)
 
 #function to convert base16(or any base) to base2 and pad each hex as 4bit binary number
+# 0x4 gets converted to 0b0100 (each hex char gets converted to 4 binary char)
+# 0x4 gets converted to 0b00000100 (if padding is 8 bits)
 
 def convertToBinary(ct, radix, padding):
     """
@@ -45,21 +50,20 @@ def convertToBinary(ct, radix, padding):
         bin_ct_together = "".join(bin_ct)
     return bin_ct_together
 
-a = convertToBinary(text,16,4)
-# print(a)
+
 
 
 #regroup to 6-bit binary strings
 def regroupString(input,n):
     split_string = []
     # n=6
-    for i in range(0, len(a), n):
-        split_string.append(a[i:i+n])
+    for i in range(0, len(input), n):
+        split_string.append(input[i:i+n])
         # print(i)
     
     return split_string
 
-b = regroupString(a, 6)
+
 # print(b)
 # shorter way to do the same thing:
 # chunks = [a[i: i+6] for i in range(0, len(a),6 )]
@@ -81,12 +85,19 @@ def stringToBase64(text):
         c.append(b64_encoding)
     return c
 
-d = stringToBase64(b)
-print("".join(d))
+
+
+
+
 #d is the required text btw
+text = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
 
+def hexTobase64(hexString):
+    a = convertToBinary(hexString,16,4)
+    b = regroupString(a, 6)
+    c = stringToBase64(b)
+    d = "".join(c)
+    return d
 
-
-
-
+print(hexTobase64(text))
 
