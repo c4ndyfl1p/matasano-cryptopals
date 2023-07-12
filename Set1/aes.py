@@ -32,8 +32,14 @@ def decrypt_aes_ecb(ciphertext, key):
 
 def get_blocks_in_list(bytelist, blocksize):
     """
-    input: python bytes(ASCIIbytes of a text) object
-    output: python byte object sliced into a list of corr block size
+    break a stream of bytes into blocks of given size, return that
+    """
+
+    """
+    input:
+        bytelist:_bytes_python bytes(ASCIIbytes of a text) object
+        blocksize:_int_ size of each block
+    output:_list_ python byte object sliced into a list of corr block size
     """
     blocks_list = []
     for i in range(0, len(bytelist),blocksize):    

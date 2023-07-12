@@ -11,12 +11,12 @@ def generate_key(keysize):
 
 def encrypt_aes_ecb(plaintext, key):
     cipher = AES.new(key, AES.MODE_ECB)
-    ciphertext = cipher.decrypt(plaintext)
+    ciphertext = cipher.encrypt(plaintext)
     return ciphertext
 
 def encrypt_aes_cbc(plaintext,key,iv):
     cipher = AES.new(key, AES.MODE_CBC, iv = iv)
-    ciphertext = cipher.decrypt(plaintext)
+    ciphertext = cipher.encrypt(plaintext)
     return ciphertext
 
 
@@ -31,7 +31,7 @@ def encryption_oracle(plaintext):
     
     plaintext = bytearray(plaintext)
     #generate random key to encrypt under
-    key = generate_key(keysize= 16)
+    key = generate_key(keysize= 16) # genertae a 16 byte = 16*8 = 128 bit key
     
     # add 5-10 random bytes before and after the plaintext
     random_bytes1 = secrets.token_bytes(secrets.choice([5,6,7,8,9,10]))
@@ -71,5 +71,9 @@ key = generate_key(16)
 cipher = encryption_oracle(plaintextt)
 # print(len(cipher))
 
-ecb_or_cbc= detect_ecb(cipher,16)
+
+if  detect_ecb(cipher,16)== True:
+    print("ECB mode: TRUE")
+else:
+    print("ECB mode: FALSE")
 

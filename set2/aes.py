@@ -54,10 +54,18 @@ def PKCS7_padding(plaintext, blocksize):
     output: padded input as a bytes object
     """
     pt = bytearray(plaintext) #convert to mutable bytearray
-    pad = blocksize - (len(pt) % blocksize)
+    # print(f"plaintext length: {len(plaintext)} bytes")
+    extra_bytes = len(plaintext) % blocksize
+    # print(f"extra bytes: {extra_bytes} bytes")
+
+    
+    pad = blocksize - extra_bytes
+    # print(f"padding bytes: {pad} bytes")
 
     for i in range(pad):
         pt.append(ord(chr(pad)))
+    
+    # print(bytes(pt))
     return bytes(pt)  
 
 def get_non_unique_blocks(inputbytes, blocksize):
@@ -94,23 +102,24 @@ def detect_ecb(ciphertext, blocksize):
     print("----------")
     print(a)
     if len(a[0])>0:
-        print("ECB moode: TRUE")
-        return ciphertext
+        # print("ECB moode: TRUE")
+        return True
     else:
-        print("ECB mode: FALSE")
-
+        # print("ECB mode: FALSE")
+        return False
+    
 def generate_key(keysize):
     key = secrets.token_bytes(keysize)
     return key
 
 def encrypt_aes_ecb(plaintext, key):
     cipher = AES.new(key, AES.MODE_ECB)
-    ciphertext = cipher.decrypt(plaintext)
+    ciphertext = cipher.encrypt(plaintext)
     return ciphertext
 
 def encrypt_aes_cbc(plaintext,key,iv):
     cipher = AES.new(key, AES.MODE_CBC, iv = iv)
-    ciphertext = cipher.decrypt(plaintext)
+    ciphertext = cipher.encrypt(plaintext)
     return ciphertext
 
 
@@ -152,3 +161,23 @@ def encryption_oracle(plaintext):
         ciphertext = encrypt_aes_cbc(plaintext, key, secrets.token_bytes(16))
         print("encryption oracle: cbc")
     return ciphertext
+
+def aes_128_ecb_append(your_string, unkown_string, key):
+    """
+    Encruption oracle - appends your string to the unknown string and encrypts under ecb mode. Can be used as an encryption oracle.
+    
+    input: "yourstring" as python byte object
+    unkownstring(python bytes): 
+    key: 16 byte(128 bit) python byte object
+
+    output: ciphertext
+    """
+    #making the payload
+    
+    plaintext = your_string + unkown_string
+
+    #actual encryption oracle
+    plaintext = PKCS7_padding(plaintext, 16)
+    ciphertext = encrypt_aes_ecb(plaintext,key)
+    return ciphertext
+

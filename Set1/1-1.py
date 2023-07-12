@@ -10,11 +10,11 @@ print(bytes.fromhex(text))
 hex_value = "4"
 #convert to Integer(decimal)
 int_value = int(hex_value, base=16)
-# print(int_value)
+print(int_value)
 
 #convert integer to binary value
 bin_value = bin(int_value)
-# print(f"bin_value: {bin_value}")
+print(f"bin_value: {bin_value}")
 
 #remove the precedding 0b
 bin_value = bin(int_value)[2:]
