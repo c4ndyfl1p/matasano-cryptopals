@@ -3,24 +3,6 @@ from pprint import pprint
 
 from aes import *
 
-# def aes_128_ecb_append(your_string, unkown_string, key):
-#     """
-#     Encruption oracle - appends your string to the unknown string and encrypts under ecb mode. Can be used as an encryption oracle.
-    
-#     input: "yourstring" as python byte object
-#     unkownstring: base 64 encoded string. Function will decode it and then append it
-#     key: 16 byte(128 bit) python byte object
-
-#     output: ciphertext
-#     """
-#     #making the payload
-    
-#     plaintext = your_string + unkown_string
-
-#     #actual encryption oracle
-#     plaintext = PKCS7_padding(plaintext, 16)
-#     ciphertext = encrypt_aes_ecb(plaintext,key)
-#     return ciphertext
 
 key = b'dTP\xdc"\xb8\xa4\x12\xe3H\xfc\xd5zS\x02\xf2'
 unknown_string = "Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK"
@@ -28,9 +10,49 @@ unknown_string = "Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaG
 # res = aes_128_ecb_append(b"", base64.b64decode(unknown_string), key) # how to use the oracle
 
 
+def find_one_byte_of_unknown_string(idx, probable_pt, block_number):  
+
+    if block_number == 0:
+        res2 = aes_128_ecb_append( b"AAAAAAAAAAAAAAAA"[0:-idx], base64.b64decode(unknown_string), key) # only 15 bytes
+    elif block_number !=0:
+        res2 = aes_128_ecb_append( b"AAAAAAAAAAAAAAAA"[0:-idx], base64.b64decode(unknown_string), key) # only 15 bytes
+
+    a2 = get_blocks_in_list(res2,16)
+    print(a2)
+    last_ct = a2[block_number][-1]
+    print(f"last_ct: {last_ct}, hex(last_ct): {hex(last_ct)}")
+
+    #iterate over the last byte of the unknown string from a-z and A-Z and store the result in a dictionary
+    possible_chars = [10] + [i for i in range(32, 91)] + [i for i in range(97, 123)]
+    for i in possible_chars:
+        # print(i)
+        
+         
+        payload = b"AAAAAAAAAAAAAAAA"[0:-idx] + probable_pt + bytes([i])
+        print(f"I'm encrypting: {get_blocks_in_list(payload, 16)}") 
+        testing_ct = aes_128_ecb_append( payload, base64.b64decode(unknown_string), key)
+        
+        
+        test1 = get_blocks_in_list(testing_ct,16)
+        test2 = test1[block_number][-1]
+
+        # if test2 == last_ct:
+        if a2[block_number]==test1[block_number]:
+            # print(f"test2: {test2}, hex(test2): {hex(test2)}")
+            # print(bytes([i]))
+            print(f"last byte of unknown string: {i}, chr(i):{chr(i)}, hex(i):{hex(i)}, ord(chr(i)):{ord(chr(i))}")
+            # probable_pt = bytes([i])
+            break
+    return bytes([i])
 
 
-
+def find_one_block(prev_decrypted_blocks, block_number):
+    probable_pt_concat = prev_decrypted_blocks
+    print(f"probable_pt_concat: {probable_pt_concat}")
+    for i in range(1,17):
+        probable_pt = find_one_byte_of_unknown_string(i, probable_pt_concat, block_number)
+        probable_pt_concat += probable_pt
+    return probable_pt_concat
 
 
 
@@ -71,13 +93,10 @@ else:
     print("detected ECB mode: FALSE")
 print(len(res))
 
-#3. Knowing the block size, craft an input block that is exactly 1 byte short 
-# (for instance, if the block size is 8 bytes, make "AAAAAAA"). Think about 
-# what the oracle function is going to put in that last byte position.
-res = aes_128_ecb_append(b"AAAAAAAAAAAAAAAA", base64.b64decode(unknown_string), key) #input of 16 bytes
-a = get_blocks_in_list(res,16)
-pprint(a[0])
+#3-5 decrypted it
 
-res = aes_128_ecb_append(b"AAAAAAAAAAAAAAA", base64.b64decode(unknown_string), key) #input of 16 bytes
-a = get_blocks_in_list(res,16)
-pprint(a[0])
+blocks_decrypted = b""
+for i in range(9):
+    blocks_decrypted =  find_one_block(blocks_decrypted, i)
+
+print(blocks_decrypted)
