@@ -3,13 +3,25 @@ from pprint import pprint
 from aes import *
 
 
+
 key = b'dTP\xdc"\xb8\xa4\x12\xe3H\xfc\xd5zS\x02\xf2'
 unknown_string = "Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK"
-# print(f"length of unknows string is {len(base64.b64decode(unknown_string))}")
+
+print(f"length of unknows string is {len(base64.b64decode(unknown_string))}")
 # res = aes_128_ecb_append(b"", base64.b64decode(unknown_string), key) # how to use the oracle
 
 
 def find_one_byte_of_unknown_string(idx, probable_pt, block_number):  
+    """Funcion to find the last byte of the unknows string in a AES-ECB mode encrypted block
+
+    Args:
+        idx (_type_): _description_
+        probable_pt (_type_): _description_
+        block_number (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
 
     if block_number == 0:
         res2 = aes_128_ecb_append( b"AAAAAAAAAAAAAAAA"[0:-idx], base64.b64decode(unknown_string), key) # only 15 bytes
